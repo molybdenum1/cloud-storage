@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const {check, validationResult} = require('express-validator');
 const config = require('config');
 const authMiddleware = require('../middleware/auth.middleware');
+const fileService = require('../services/fileService');
+const File = require('../models/File');
 
 const router = new Router();
 
@@ -19,7 +21,7 @@ router.post('/reg',
         
         const errors = validationResult(req);
         if(!errors.isEmpty){
-            return res.status(400).json({message: "Unccoret request", errors});
+            return res.status(400).json({message: "Uncorrect request", errors});
         }
 
         const {email, password} = req.body;
@@ -31,7 +33,7 @@ router.post('/reg',
         const hashPass = await bcrypt.hash(password, 8);
         const user = new User({email, password: hashPass});
         await user.save();
-
+        await fileService.createDir(new File({user: user.id, name: ''}));
         return res.json({message: 'User was created'});
 
     } catch (error) {
@@ -92,9 +94,5 @@ router.get('/auth', authMiddleware,
             res.send({message: 'Server Error'});
         }
 })
-
-
-
-
 
 module.exports = router;
