@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import Navbar from './navbar/Navbar';
 import './App.css';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import Registration from './auth/Registration';
 import Login from './auth/Login';
 import { useDispatch, useSelector } from 'react-redux';
 import { auth } from '../actions/user';
+import Disk from './disk/Disk';
 
 
 function App() {
@@ -20,11 +21,17 @@ function App() {
     <BrowserRouter>
       <div className="app">
         <Navbar/>
-        { !isAuth && 
-          <Routes>
-            <Route path="/reg" element={<Registration/>}/>
-            <Route path="/login" element={<Login/>}/>
-          </Routes>
+        { !isAuth ? 
+            <Routes>
+              <Route path="/reg" element={<Registration/>}/>
+              <Route path="/login" element={<Login/>}/>
+              <Route path="*" element={<Navigate to="/login"/>}/>
+            </Routes>
+          :
+            <Routes>
+              <Route exact path="/" element={<Disk/>}/>
+              <Route path="*" element={<Navigate to="/"/>}/>
+            </Routes>
         }
       </div>
     </BrowserRouter>
